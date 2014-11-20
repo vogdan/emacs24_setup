@@ -15,6 +15,10 @@ Tested and worked on & `24.3.1 (Linux Mint)` (**64 bit**).
 ```
 
 
+#### Troubleshooting
+
+If code browsing is not working, grab the latest `ecb` from [here](https://github.com/alexott/ecb/), edit `Makefile` and run `make`.
+
 
     
     
