@@ -1,0 +1,173 @@
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(auto-compression-mode t nil (jka-compr))
+ '(case-fold-search t)
+ '(column-number-mode t)
+ '(current-language-environment "Latin-1")
+ '(default-input-method "latin-1-prefix")
+ '(display-time-mode t)
+ '(ecb-layout-window-sizes nil)
+ '(ecb-options-version "2.40")
+ '(global-font-lock-mode t nil (font-lock))
+ '(indent-tabs-mode nil)
+ '(menu-bar-mode t)
+ '(py-shell-name "/usr/bin/python")
+ '(py-verbose-p t)
+ '(show-paren-mode t nil (paren))
+ '(tcl-continued-indent-level 2)
+ '(tcl-indent-level 2)
+ '(truncate-lines t)
+ '(uniquify-buffer-name-style (quote forward) nil (uniquify)))
+ '(tab-stop-list (quote (4 8 12 16 20 24 28 32 36 40 44 48 52 56 60 64 68 72 76 80 84 88 92 96 100 104 108 112 116 120)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
+
+;; Set some personal info
+(setq user-full-name "Bogdan")
+(setq user-login-name "")
+(setq user-mail-address "")
+
+;; mouse scroll
+(defun up-slightly () (interactive) (scroll-up 5))
+(defun down-slightly () (interactive) (scroll-down 5))
+(global-set-key [mouse-4] 'down-slightly)
+(global-set-key [mouse-5] 'up-slightly)
+
+;; Frame looking
+(tool-bar-mode -1)             ; hide toolbar
+(set-scroll-bar-mode 'right)   ; put scrollbar to the right
+(column-number-mode t)         ; column number in modeline
+;(setq-default line-spacing 0) ; extra pixel space between lines
+
+;; Quick check for emacs flavor
+(setq ic-xemacs-p (string-match "XEmacs" emacs-version))
+(setq ic-fsfemacs-p (not ic-xemacs-p))
+
+;; auto-revert
+(setq revert-without-query (list "bogdanEmacsArev.log" ".log"))
+(setq auto-revert-interval 2)
+
+;; ask before exiting
+(defun ic-exit ()
+ (interactive)
+ (if (yes-or-no-p "Really, really exit EMACS ???? ")
+         (save-buffers-kill-emacs)))
+(define-key global-map [(control x)(control c)] 'ic-exit)
+
+
+;; Various settings
+(setq debug-on-error nil)
+(setq auto-save-list-file-prefix nil)   ; don't recover sessions
+(setq inhibit-startup-message t)        ; no starting gibberish
+(setq truncate-partial-width-windows t) ; wrap at 'fill-column'!!
+(setq require-final-newline t)          ; add final newline on save
+(setq next-line-add-newlines nil)       ; don't scroll beyond eof
+(setq search-highlight t)               ; highlight on search
+(setq default-major-mode 'text-mode)    ; go by default in text mode
+(setq default-tab-width 4)
+(setq indent-tabs-mode nil)             ; use only tabs and no spaces
+(setq visible-bell t)
+(line-number-mode t)                    ; show point location
+(column-number-mode t)
+(setq display-time-day-and-date t)      ; display time and date
+;;(setq make-backup-files nil)            ; don't create ~ backup files
+;; enable some imo useful stuff
+(put 'narrow-to-region 'disabled nil)
+(put 'downcase-region 'disabled nil)
+(put 'upcase-region 'disabled nil)
+
+;; Key bindings
+(global-set-key [end] 'end-of-line)
+(global-set-key [home] 'beginning-of-line)
+(global-set-key [control-end] 'end-of-buffer)
+(global-set-key [control-home] 'beginning-of-buffer)
+(global-set-key "\C-x\C-b" 'buffer-menu)
+;;(global-set-key [f10] 'tcl-restart-with-file)
+(global-set-key "\C-l" 'goto-line)        
+
+;;Screen colors & syntax highlighting
+;; (set-face-font 'default "-adobe-courier-medium-r-*-*-14-*-*-*-*-*-*-*")
+;; (set-face-font 'bold "-adobe-courier-bold-r-*-*-14-*-*-*-*-*-*-*")
+;; (set-face-font 'italic "-adobe-courier-medium-o-*-*-14-*-*-*-*-*-*-*")
+;; (set-face-font 'bold-italic "-ad-courier-bold-o-*-*-14-*-*-*-*-*-*-*")
+
+;; Set some (hopefully) eye-soothing colors (dark background)
+(set-face-background 'default "#101020")
+(set-face-foreground 'default "#BEB8AB")
+(set-face-background 'highlight "#4186be")
+(set-face-foreground 'highlight "white")
+(set-face-background 'region "blue") 
+
+(copy-face 'highlight 'isearch)
+
+(setq font-lock-maximum-decoration t)
+(setq lazy-lock-minimum-size (* 4 4))
+(setq font-lock-maximum-size nil)
+
+;; (require 'font-lock)
+(set-face-foreground 'font-lock-comment-face          "gray40")
+(set-face-foreground 'font-lock-string-face           "#71bebe")
+(set-face-foreground 'font-lock-keyword-face          "#fff796")
+(set-face-foreground 'font-lock-type-face             "white")
+(set-face-foreground 'font-lock-function-name-face    "#cf9ebe")
+(set-face-foreground 'font-lock-variable-name-face    "#968a38")
+
+(set-cursor-color "green")
+(blink-cursor-mode "on")
+
+;; Set colors for hyper-apropos mode within a hook
+(defun ic-hyper-apropos-mode-hook ()
+ (set-face-foreground 'hyper-apropos-hyperlink        "#cf6171")
+ (set-face-foreground 'hyper-apropos-documentation        "#71bebe")
+ )
+
+;;ECB
+(add-to-list 'load-path "~/.emacs.d/ecb-2.41")
+(require 'ecb)
+(setq stack-trace-on-error nil)  ;;don't popup Backtrace window
+(setq ecb-tip-of-the-day nil)
+(setq ecb-auto-activate t)
+(setq ecb-layout-name "left6")
+(setq ecb-primary-secondary-mouse-buttons (quote mouse-1--mouse-2))
+(setq ecb-source-path (quote ("~/")))
+(setq ecb-auto-update-methods-after-save t)
+
+;;auto-complete
+(add-to-list 'load-path "~/.emacs.d/auto-complete-1.3.1-dbogdan")
+(require 'auto-complete-config)
+(add-to-list 'ac-dictionary-directories "~/.emacs.d/auto-complete-1.3.1-dbogdan/ac-dict")
+(ac-config-default)
+(require 'ac-python)
+
+;; ;;python mode
+;; (setq py-install-directory "~/python-mode.el-6.1.3")
+;; (add-to-list 'load-path py-install-directory)
+;; (require 'python-mode)
+
+;; Highlight character at "fill-column" position.
+;; http://docs.astropy.org/en/v0.1/development/codeguide_emacs.html
+(add-to-list 'load-path "~/.emacs.d/")
+(setq-default fill-column 80)
+(require 'column-marker)
+(set-face-background 'column-marker-1 "red")
+(add-hook 'python-mode-hook (lambda () (interactive) (column-marker-1 fill-column)))
+
+
+;; Set Frame width/height
+(defun arrange-frame (w h x y)
+  "Set the width, height, and x/y position of the current frame"
+  (let ((frame (selected-frame)))
+    (delete-other-windows)
+    (set-frame-position frame x y)
+    (set-frame-size frame w h)))
+ 
+(arrange-frame 105 60 5 5)
+
