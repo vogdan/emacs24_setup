@@ -1,16 +1,16 @@
 
 (custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
+  ;; custom-set-variables was added by Custom.
+  ;; If you edit it by hand, you could mess it up, so be careful.
+  ;; Your init file should contain only one such instance.
+  ;; If there is more than one, they won't work right.
  '(auto-compression-mode t nil (jka-compr))
  '(case-fold-search t)
  '(column-number-mode t)
  '(current-language-environment "Latin-1")
  '(default-input-method "latin-1-prefix")
  '(display-time-mode t)
- '(ecb-layout-window-sizes nil)
+ '(ecb-layout-window-sizes (quote (("left6" (0.21904761904761905 . 0.15789473684210525) (0.21904761904761905 . 0.6052631578947368) (0.21904761904761905 . 0.21052631578947367)))))
  '(ecb-options-version "2.40")
  '(global-font-lock-mode t nil (font-lock))
  '(indent-tabs-mode nil)
@@ -24,10 +24,10 @@
  '(uniquify-buffer-name-style (quote forward) nil (uniquify)))
  '(tab-stop-list (quote (4 8 12 16 20 24 28 32 36 40 44 48 52 56 60 64 68 72 76 80 84 88 92 96 100 104 108 112 116 120)))
 (custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
+  ;; custom-set-faces was added by Custom.
+  ;; If you edit it by hand, you could mess it up, so be careful.
+  ;; Your init file should contain only one such instance.
+  ;; If there is more than one, they won't work right.
  )
 
 ;; Set some personal info
@@ -91,7 +91,34 @@
 (global-set-key [control-home] 'beginning-of-buffer)
 (global-set-key "\C-x\C-b" 'buffer-menu)
 ;;(global-set-key [f10] 'tcl-restart-with-file)
-(global-set-key "\C-l" 'goto-line)        
+(global-set-key "\C-l" 'goto-line)       
+;; copy/paste to/fomr outside emacs
+(defun copy-to-clipboard ()
+  (interactive)
+  (if (display-graphic-p)
+      (progn
+        (message "Yanked region to x-clipboard!")
+        (call-interactively 'clipboard-kill-ring-save)
+        )
+    (if (region-active-p)
+        (progn
+          (shell-command-on-region (region-beginning) (region-end) "xsel -i -b")
+          (message "Yanked region to clipboard!")
+          (deactivate-mark))
+      (message "No region active; can't yank to clipboard!")))
+  )
+(defun paste-from-clipboard ()
+  (interactive)
+  (if (display-graphic-p)
+      (progn
+        (clipboard-yank)
+        (message "graphics active")
+        )
+    (insert (shell-command-to-string "xsel -o -b"))
+    )
+  )
+(global-set-key "\C-c" 'copy-to-clipboard)
+(global-set-key "\C-v" 'paste-from-clipboard) 
 
 ;;Screen colors & syntax highlighting
 ;; (set-face-font 'default "-adobe-courier-medium-r-*-*-14-*-*-*-*-*-*-*")
@@ -130,11 +157,13 @@
  )
 
 ;;ECB
-(add-to-list 'load-path "~/.emacs.d/ecb-2.41")
+(load-file "~/.emacs.d/cedet-1.0pre7/common/cedet.el")
+;; (add-to-list 'load-path "~/ecb-snap")
+(add-to-list 'load-path "~/.emacs.d/ecb-2.40")
 (require 'ecb)
 (setq stack-trace-on-error nil)  ;;don't popup Backtrace window
 (setq ecb-tip-of-the-day nil)
-(setq ecb-auto-activate t)
+;;(setq ecb-auto-activate t)
 (setq ecb-layout-name "left6")
 (setq ecb-primary-secondary-mouse-buttons (quote mouse-1--mouse-2))
 (setq ecb-source-path (quote ("~/")))
@@ -161,6 +190,7 @@
 (add-hook 'python-mode-hook (lambda () (interactive) (column-marker-1 fill-column)))
 
 
+
 ;; Set Frame width/height
 (defun arrange-frame (w h x y)
   "Set the width, height, and x/y position of the current frame"
@@ -171,3 +201,10 @@
  
 (arrange-frame 105 60 5 5)
 
+
+;; Set-up Emacs plugin for SOS
+;; (setq clio-dir (getenv "CLIOSOFT_DIR"))
+;; (setq clio-emacs-script (concat clio-dir "/scripts/sos_emacs.el"))
+;; (load-file clio-emacs-script)
+;; (load-file (concat clio_dir "/scripts/revert_buffs.el"))
+;;(load-file "~/.emacs.d/sos_emacs.el")
